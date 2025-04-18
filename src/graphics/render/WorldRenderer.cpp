@@ -316,7 +316,7 @@ void WorldRenderer::renderHands(
         assets.get<model::Model>(def.modelName),
         nullptr
     );
-    Window::clearDepth();
+    display::clearDepth();
     setupWorldShader(entityShader, hudcam, engine.getSettings(), 0.0f);
     skybox->bind();
     modelBatch->render();
@@ -338,8 +338,8 @@ void WorldRenderer::draw(
 
     auto world = level.getWorld();
 
-    const Viewport& vp = pctx.getViewport();
-    camera.aspect = vp.getWidth() / static_cast<float>(vp.getHeight());
+    const auto& vp = pctx.getViewport();
+    camera.setAspectRatio(vp.x / static_cast<float>(vp.y));
 
     const auto& settings = engine.getSettings();
     const auto& worldInfo = world->getInfo();
@@ -359,7 +359,7 @@ void WorldRenderer::draw(
         DrawContext wctx = pctx.sub();
         postProcessing.use(wctx);
 
-        Window::clearDepth();
+        display::clearDepth();
 
         // Drawing background sky plane
         skybox->draw(pctx, camera, assets, worldInfo.daytime, clouds);
@@ -388,12 +388,7 @@ void WorldRenderer::draw(
         renderBlockOverlay(wctx);
     }
 
-    // Rendering fullscreen quad
-    auto screenShader = assets.get<Shader>("screen");
-    screenShader->use();
-    screenShader->uniform1f("u_timer", timer);
-    screenShader->uniform1f("u_dayTime", worldInfo.daytime);
-    postProcessing.render(pctx, screenShader);
+    postProcessing.render(pctx, assets, timer);
 }
 
 void WorldRenderer::renderBlockOverlay(const DrawContext& wctx) {

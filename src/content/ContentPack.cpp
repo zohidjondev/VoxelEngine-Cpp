@@ -15,12 +15,14 @@ namespace fs = std::filesystem;
 
 ContentPack ContentPack::createCore(const EnginePaths& paths) {
     return ContentPack {
-        "core", "Core", ENGINE_VERSION_STRING, "", "", "res:", "res:", {}
+        "core", "Core", ENGINE_VERSION_STRING, "", "", "res:", {}
     };
 }
 
 const std::vector<std::string> ContentPack::RESERVED_NAMES = {
-    "res", "abs", "local", "core", "user", "world", "none", "null"};
+    "res", "abs", "local", "core", "user", "world", "none", "null", "project", 
+    "pack", "packid", "root"
+};
 
 contentpack_error::contentpack_error(
     std::string packId, io::path folder, const std::string& message
@@ -70,7 +72,7 @@ static void checkContentPackId(const std::string& id, const io::path& folder) {
     }
 }
 
-ContentPack ContentPack::read(const std::string& path, const io::path& folder) {
+ContentPack ContentPack::read(const io::path& folder) {
     auto root = io::read_json(folder / PACKAGE_FILENAME);
     ContentPack pack;
     root.at("id").get(pack.id);
@@ -90,7 +92,6 @@ ContentPack ContentPack::read(const std::string& path, const io::path& folder) {
     root.at("description").get(pack.description);
     root.at("source").get(pack.source);
     pack.folder = folder;
-    pack.path = path;
 
     if (auto found = root.at("dependencies")) {
         const auto& dependencies = *found;
@@ -114,17 +115,18 @@ ContentPack ContentPack::read(const std::string& path, const io::path& folder) {
         }
     }
 
-    if (pack.id == "none")
+    if (pack.id == "none") {
         throw contentpack_error(
             pack.id, folder, "content-pack id is not specified"
         );
+    }
     checkContentPackId(pack.id, folder);
 
     return pack;
 }
 
 void ContentPack::scanFolder(
-    const std::string& path, const io::path& folder, std::vector<ContentPack>& packs
+    const io::path& folder, std::vector<ContentPack>& packs
 ) {
     if (!io::is_directory(folder)) {
         return;
@@ -133,9 +135,7 @@ void ContentPack::scanFolder(
         if (!io::is_directory(packFolder)) continue;
         if (!is_pack(packFolder)) continue;
         try {
-            packs.push_back(
-                read(path + "/" + packFolder.name(), packFolder)
-            );
+            packs.push_back(read(packFolder));
         } catch (const contentpack_error& err) {
             std::cerr << "package.json error at " << err.getFolder().string();
             std::cerr << ": " << err.what() << std::endl;

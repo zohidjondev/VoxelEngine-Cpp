@@ -1,7 +1,9 @@
+#define VC_ENABLE_REFLECTION
 #include "libgui.hpp"
 #include "assets/Assets.hpp"
 #include "engine/Engine.hpp"
 #include "frontend/locale.hpp"
+#include "graphics/ui/GUI.hpp"
 #include "graphics/ui/elements/Button.hpp"
 #include "graphics/ui/elements/Canvas.hpp"
 #include "graphics/ui/elements/CheckBox.hpp"
@@ -80,8 +82,9 @@ static int l_container_add(lua::State* L) {
     }
     auto xmlsrc = lua::require_string(L, 2);
     try {
-        auto subnode =
-            guiutil::create(xmlsrc, docnode.document->getEnvironment());
+        auto subnode = guiutil::create(
+            engine->getGUI(), xmlsrc, docnode.document->getEnvironment()
+        );
         node->add(subnode);
         UINode::getIndices(subnode, docnode.document->getMapWriteable());
     } catch (const std::exception& err) {
@@ -93,7 +96,7 @@ static int l_container_add(lua::State* L) {
 static int l_node_destruct(lua::State* L) {
     auto docnode = get_document_node(L);
     auto node = docnode.node;
-    engine->getGUI()->postRunnable([node]() {
+    engine->getGUI().postRunnable([node]() {
         auto parent = node->getParent();
         if (auto container = dynamic_cast<Container*>(parent)) {
             container->remove(node.get());
@@ -338,6 +341,43 @@ static int p_get_data(UINode* node, lua::State* L) {
     return 0;
 }
 
+static const std::string& request_node_id(const DocumentNode& docnode) {
+    std::string id = docnode.node->getId();
+    if (id.empty()) {
+        id = "#" + std::to_string(
+            reinterpret_cast<std::ptrdiff_t>(docnode.node.get()));
+    }
+    docnode.node->setId(std::move(id));
+    UINode::getIndices(
+        docnode.node, docnode.document->getMapWriteable()
+    );
+    return docnode.node->getId();
+}
+
+/// @brief Push UI-document node object to stack
+/// using lua argument at 1 as document name
+/// @param id UI-node id
+static int push_document_node(lua::State* L, const std::string& id) {
+    lua::requireglobal(L, "__vc_get_document_node");
+    lua::pushvalue(L, 1);
+    lua::pushstring(L, id);
+    return lua::call(L, 2, 1);
+}
+
+static int p_get_parent(UINode* node, lua::State* L) {
+    auto parent = node->getParent();
+    if (!parent) {
+        return 0;
+    }
+    auto docname = lua::require_string(L, 1);
+    auto element = lua::require_string(L, 2);
+    auto docnode = get_document_node_impl(L, docname, element);
+
+    const auto& id = request_node_id(docnode);
+
+    return push_document_node(L, id);
+}
+
 static int p_get_add(UINode* node, lua::State* L) {
     if (dynamic_cast<Container*>(node)) {
         return lua::pushcfunction(L, lua::wrap<l_container_add>);
@@ -420,7 +460,7 @@ static int p_get_line_pos(UINode*, lua::State* L) {
 }
 
 static int p_get_cursor(UINode* node, lua::State* L) {
-    return lua::pushstring(L, to_string(node->getCursor()));
+    return lua::pushlstring(L, CursorShapeMeta.getName(node->getCursor()));
 }
 
 static int p_get_scroll(UINode* node, lua::State* L) {
@@ -433,6 +473,21 @@ static int p_get_scroll(UINode* node, lua::State* L) {
 static int l_gui_getattr(lua::State* L) {
     auto docname = lua::require_string(L, 1);
     auto element = lua::require_string(L, 2);
+    if (lua::isnumber(L, 3)) {
+        auto docnode = get_document_node_impl(L, docname, element);
+        auto container = dynamic_cast<Container*>(docnode.node.get());
+        if (container == nullptr) {
+            return 0;
+        }
+        size_t index = lua::tointeger(L, 3) - 1;
+        const auto& nodes = container->getNodes();
+        if (index >= nodes.size()) {
+            return 0;
+        }
+        const auto& node = nodes.at(index);
+        const auto& id = request_node_id(DocumentNode {docnode.document, node});
+        return push_document_node(L, id);
+    }
     auto attr = lua::require_string(L, 3);
 
     static const std::unordered_map<
@@ -489,6 +544,7 @@ static int l_gui_getattr(lua::State* L) {
             {"focused", p_get_focused},
             {"cursor", p_get_cursor},
             {"data", p_get_data},
+            {"parent", p_get_parent},
         };
     auto func = getters.find(attr);
     if (func != getters.end()) {
@@ -651,16 +707,16 @@ static void p_set_focused(
     const std::shared_ptr<UINode>& node, lua::State* L, int idx
 ) {
     if (lua::toboolean(L, idx) && !node->isFocused()) {
-        engine->getGUI()->setFocus(node);
+        engine->getGUI().setFocus(node);
     } else if (node->isFocused()) {
         node->defocus();
     }
 }
 
 static void p_set_cursor(UINode* node, lua::State* L, int idx) {
-    if (auto cursor = CursorShape_from(lua::require_string(L, idx))) {
-        node->setCursor(*cursor);
-    }
+    auto cursor = CursorShape::ARROW; // reset to default
+    CursorShapeMeta.getItem(lua::require_string(L, idx), cursor);
+    node->setCursor(cursor);
 }
 
 static int p_set_scroll(UINode* node, lua::State* L, int idx) {
@@ -770,7 +826,7 @@ static int l_gui_reindex(lua::State* L) {
 
 /// @brief gui.get_locales_info() -> table of tables
 static int l_gui_get_locales_info(lua::State* L) {
-    auto& locales = langs::locales_info;
+    auto& locales = langs::get_locales_info();
     lua::createtable(L, 0, locales.size());
     for (auto& entry : locales) {
         lua::createtable(L, 0, 1);
@@ -782,7 +838,7 @@ static int l_gui_get_locales_info(lua::State* L) {
 }
 
 static int l_gui_getviewport(lua::State* L) {
-    return lua::pushvec2(L, engine->getGUI()->getContainer()->getSize());
+    return lua::pushvec2(L, engine->getGUI().getContainer()->getSize());
 }
 
 static int l_gui_clear_markup(lua::State* L) {
@@ -845,6 +901,7 @@ static int l_gui_load_document(lua::State* L) {
     auto args = lua::tovalue(L, 3);
     
     auto documentPtr = UiDocument::read(
+        engine->getGUI(),
         scripting::get_root_environment(),
         alias,
         filename,

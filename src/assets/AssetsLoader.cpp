@@ -19,13 +19,14 @@
 #include "items/ItemDef.hpp"
 #include "Assets.hpp"
 #include "assetload_funcs.hpp"
+#include "engine/Engine.hpp"
 
 namespace fs = std::filesystem;
 
 static debug::Logger logger("assets-loader");
 
-AssetsLoader::AssetsLoader(Assets* assets, const ResPaths* paths)
-    : assets(assets), paths(paths) {
+AssetsLoader::AssetsLoader(Engine& engine, Assets& assets, const ResPaths& paths)
+    : engine(engine), assets(assets), paths(paths) {
     addLoader(AssetType::SHADER, assetload::shader);
     addLoader(AssetType::TEXTURE, assetload::texture);
     addLoader(AssetType::FONT, assetload::font);
@@ -33,6 +34,7 @@ AssetsLoader::AssetsLoader(Assets* assets, const ResPaths* paths)
     addLoader(AssetType::LAYOUT, assetload::layout);
     addLoader(AssetType::SOUND, assetload::sound);
     addLoader(AssetType::MODEL, assetload::model);
+    addLoader(AssetType::POST_EFFECT, assetload::posteffect);
 }
 
 void AssetsLoader::addLoader(AssetType tag, aloader_func func) {
@@ -73,7 +75,7 @@ void AssetsLoader::loadNext() {
         aloader_func loader = getLoader(entry.tag);
         auto postfunc =
             loader(this, paths, entry.filename, entry.alias, entry.config);
-        postfunc(assets);
+        postfunc(&assets);
         entries.pop();
     } catch (std::runtime_error& err) {
         logger.error() << err.what();
@@ -101,7 +103,7 @@ static void add_layouts(
             AssetType::LAYOUT,
             file.string(),
             name,
-            std::make_shared<LayoutCfg>(env)
+            std::make_shared<LayoutCfg>(&loader.getEngine().getGUI(), env)
         );
     }
 }
@@ -130,6 +132,8 @@ static std::string assets_def_folder(AssetType tag) {
             return SOUNDS_FOLDER;
         case AssetType::MODEL:
             return MODELS_FOLDER;
+        case AssetType::POST_EFFECT:
+            return POST_EFFECTS_FOLDER;
     }
     return "<error>";
 }
@@ -195,11 +199,12 @@ void AssetsLoader::processPreloadConfig(const io::path& file) {
     processPreloadList(AssetType::TEXTURE, root["textures"]);
     processPreloadList(AssetType::SOUND, root["sounds"]);
     processPreloadList(AssetType::MODEL, root["models"]);
+    processPreloadList(AssetType::POST_EFFECT, root["post-effects"]);
     // layouts are loaded automatically
 }
 
 void AssetsLoader::processPreloadConfigs(const Content* content) {
-    auto preloadFile = paths->getMainRoot() / "preload.json";
+    io::path preloadFile = "res:preload.json";
     if (io::exists(preloadFile)) {
         processPreloadConfig(preloadFile);
     }
@@ -211,7 +216,7 @@ void AssetsLoader::processPreloadConfigs(const Content* content) {
             continue;
         }
         const auto& pack = entry.second;
-        auto preloadFile = pack->getInfo().folder / "preload.json";
+        preloadFile = pack->getInfo().folder / "preload.json";
         if (io::exists(preloadFile)) {
             processPreloadConfig(preloadFile);
         }
@@ -296,7 +301,11 @@ bool AssetsLoader::loadExternalTexture(
     return false;
 }
 
-const ResPaths* AssetsLoader::getPaths() const {
+Engine& AssetsLoader::getEngine() {
+    return engine;
+}
+
+const ResPaths& AssetsLoader::getPaths() const {
     return paths;
 }
 
@@ -324,7 +333,7 @@ std::shared_ptr<Task> AssetsLoader::startTask(runnable onDone) {
         std::make_shared<util::ThreadPool<aloader_entry, assetload::postfunc>>(
             "assets-loader-pool",
             [=]() { return std::make_shared<LoaderWorker>(this); },
-            [=](const assetload::postfunc& func) { func(assets); }
+            [this](const assetload::postfunc& func) { func(&assets); }
         );
     pool->setOnComplete(std::move(onDone));
     while (!entries.empty()) {

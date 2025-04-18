@@ -186,8 +186,13 @@ end
 gui_util = require "core:internal/gui_util"
 
 Document = gui_util.Document
+Element = gui_util.Element
 RadioGroup = gui_util.RadioGroup
 __vc_page_loader = gui_util.load_page
+
+function __vc_get_document_node(docname, nodeid)
+    return Element.new(docname, nodeid)
+end
 
 _GUI_ROOT = Document.new("core:root")
 _MENU = _GUI_ROOT.menu
@@ -263,6 +268,11 @@ entities.get_all = function(uids)
         return stdcomp.get_all(uids)
     end
 end
+local bytearray = require "core:internal/bytearray"
+Bytearray = bytearray.FFIBytearray
+Bytearray_as_string = bytearray.FFIBytearray_as_string
+Bytearray_construct = Bytearray.__call
+ffi = nil
 
 math.randomseed(time.uptime() * 1536227939)
 

@@ -16,17 +16,7 @@ using namespace toml;
 class TomlReader : BasicParser<char> {
     dv::value root;
 
-    void skipWhitespace() override {
-        BasicParser::skipWhitespace();
-        if (hasNext() && source[pos] == '#') {
-            skipLine();
-            if (hasNext() && is_whitespace(peek())) {
-                skipWhitespace();
-            }
-        }
-    }
-
-    // modified version of BaseParser.parseString
+    // modified version of BasicParser.parseString
     // todo: extract common part
     std::string parseMultilineString() {
         pos += 2;
@@ -214,6 +204,7 @@ class TomlReader : BasicParser<char> {
 public:
     TomlReader(std::string_view file, std::string_view source)
         : BasicParser(file, source), root(dv::object()) {
+        hashComment = true;
     }
 
     dv::value read() {
