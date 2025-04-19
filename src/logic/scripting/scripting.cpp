@@ -261,6 +261,11 @@ void scripting::on_content_load(Content* content) {
     load_script("stdcmd.lua", true);
 }
 
+void scripting::on_content_reset() {
+    scripting::content = nullptr;
+    scripting::indices = nullptr;
+}
+
 void scripting::on_world_load(LevelController* controller) {
     scripting::level = controller->getLevel();
     scripting::blocks = controller->getBlocksController();
