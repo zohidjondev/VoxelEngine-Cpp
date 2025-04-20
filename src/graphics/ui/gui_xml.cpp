@@ -434,6 +434,11 @@ static std::shared_ptr<UINode> read_text_box(
     auto placeholder =
         util::str2wstr_utf8(element.attr("placeholder", "").getText());
     auto hint = util::str2wstr_utf8(element.attr("hint", "").getText());
+    if (!hint.empty() && hint[0] == '@') {
+        hint = langs::get(
+            hint.substr(1), util::str2wstr_utf8(reader.getContext())
+        );
+    }
     auto text = parse_inner_text(element, reader.getContext());
     auto textbox = std::make_shared<TextBox>(
         reader.getGUI(), placeholder, glm::vec4(0.0f)
