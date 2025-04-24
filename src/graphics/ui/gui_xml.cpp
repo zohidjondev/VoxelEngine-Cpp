@@ -180,6 +180,10 @@ static void read_uinode(
         node.listenAction(onclick);
     }
 
+    if (auto ondefocus = create_action(reader, element, "ondefocus")) {
+        node.listenDefocus(ondefocus);
+    }
+
     if (auto ondoubleclick = create_action(reader, element, "ondoubleclick")) {
         node.listenDoubleClick(ondoubleclick);
     }

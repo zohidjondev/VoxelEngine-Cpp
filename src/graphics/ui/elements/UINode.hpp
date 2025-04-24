@@ -114,6 +114,8 @@ namespace gui {
         ActionsSet actions;
         /// @brief 'ondoubleclick' callbacks
         ActionsSet doubleClickCallbacks;
+        /// @brief 'ondefocus' callbacks
+        ActionsSet defocusCallbacks;
         /// @brief element tooltip text
         std::wstring tooltip;
         /// @brief element tooltip delay
@@ -169,8 +171,9 @@ namespace gui {
         /// @brief Get element z-index
         int getZIndex() const;
 
-        virtual UINode* listenAction(const onaction &action);
-        virtual UINode* listenDoubleClick(const onaction &action);
+        virtual UINode* listenAction(const onaction& action);
+        virtual UINode* listenDoubleClick(const onaction& action);
+        virtual UINode* listenDefocus(const onaction& action);
 
         virtual void onFocus() {focused = true;}
         virtual void doubleClick(int x, int y);
