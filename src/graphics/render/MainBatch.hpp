@@ -21,12 +21,11 @@ struct MainBatchVertex {
     std::array<uint8_t,4> color;
 
     static constexpr VertexAttribute ATTRIBUTES[] = {
-            {GL_FLOAT, false, 3},
-            {GL_FLOAT, false, 2},
-            {GL_FLOAT, false, 3},
-            {GL_UNSIGNED_BYTE, true, 4},
-            {0}
-    };
+        {VertexAttribute::Type::FLOAT, false, 3},
+        {VertexAttribute::Type::FLOAT, false, 2},
+        {VertexAttribute::Type::FLOAT, false, 3},
+        {VertexAttribute::Type::UNSIGNED_BYTE, true, 4},
+        {{}, 0}};
 };
 
 class MainBatch {

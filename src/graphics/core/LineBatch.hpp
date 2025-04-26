@@ -14,7 +14,10 @@ struct LineVertex {
     glm::vec3 position;
     glm::vec4 color;
 
-    static constexpr VertexAttribute ATTRIBUTES[] { {GL_FLOAT,false,3},{GL_FLOAT,false,4}, {0} };
+    static constexpr VertexAttribute ATTRIBUTES[] {
+        {VertexAttribute::Type::FLOAT, false, 3},
+        {VertexAttribute::Type::FLOAT, false, 4},
+        {{}, 0}};
 };
 
 class LineBatch : public Flushable {

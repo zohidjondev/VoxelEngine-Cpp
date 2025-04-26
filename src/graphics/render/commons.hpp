@@ -3,12 +3,11 @@
 #include <vector>
 #include <array>
 #include <memory>
+#include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
 #include "graphics/core/MeshData.hpp"
 #include "util/Buffer.hpp"
-
-
 
 /// @brief Chunk mesh vertex format
 struct ChunkVertex {
@@ -17,11 +16,10 @@ struct ChunkVertex {
     std::array<uint8_t, 4> color;
 
     static constexpr VertexAttribute ATTRIBUTES[] = {
-            {GL_FLOAT,         false, 3},
-            {GL_FLOAT,         false, 2},
-            {GL_UNSIGNED_BYTE, true,  4},
-            {0}
-    };
+        {VertexAttribute::Type::FLOAT, false, 3},
+        {VertexAttribute::Type::FLOAT, false, 2},
+        {VertexAttribute::Type::UNSIGNED_BYTE, true, 4},
+        {{}, 0}};
 };
 
 /// @brief Chunk mesh vertex attributes

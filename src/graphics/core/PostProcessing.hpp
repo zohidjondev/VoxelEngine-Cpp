@@ -16,9 +16,8 @@ struct PostProcessingVertex {
     glm::vec2 position;
 
     static constexpr VertexAttribute ATTRIBUTES[] {
-            {GL_FLOAT,false,2},
-            {0}
-    };
+        {VertexAttribute::Type::FLOAT, false, 2}, 
+        {{}, 0}};
 };
 
 /// @brief Framebuffer with blitting with shaders.

@@ -1,30 +1,36 @@
 #pragma once
 
 #include <stdexcept>
-#include <GL/glew.h>
 
 #include "typedefs.hpp"
 #include "util/Buffer.hpp"
 
 /// @brief Vertex attribute info
 struct VertexAttribute {
-    uint32_t type = 0;
+    enum class Type {
+        FLOAT,
+        INT, UNSIGNED_INT,
+        SHORT, UNSIGNED_SHORT,
+        BYTE, UNSIGNED_BYTE
+    };
+
+    Type type = Type::FLOAT;
     bool normalized = false;
     ubyte count = 0;
 
     [[nodiscard]] uint32_t size() const {
         switch (type) {
-            case GL_FLOAT:
-                return count * sizeof(GLfloat);
-            case GL_UNSIGNED_INT:
-            case GL_INT:
-                return count * sizeof(GLint);
-            case GL_UNSIGNED_SHORT:
-            case GL_SHORT:
-                return count * sizeof(GLshort);
-            case GL_UNSIGNED_BYTE:
-            case GL_BYTE:
-                return count * sizeof(GLbyte);
+            case Type::FLOAT:
+                return count * sizeof(float);
+            case Type::UNSIGNED_INT:
+            case Type::INT:
+                return count * sizeof(int32_t);
+            case Type::UNSIGNED_SHORT:
+            case Type::SHORT:
+                return count * sizeof(int16_t);
+            case Type::UNSIGNED_BYTE:
+            case Type::BYTE:
+                return count * sizeof(int8_t);
             default:
                 throw std::runtime_error("VertexAttribute type is not supported");
         }

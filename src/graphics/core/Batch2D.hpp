@@ -17,11 +17,10 @@ struct Batch2DVertex {
     glm::vec4 color;
 
     static constexpr VertexAttribute ATTRIBUTES[] {
-            {GL_FLOAT, false, 2},
-            {GL_FLOAT, false,2},
-            {GL_FLOAT, false, 4},
-            {0}
-    };
+        {VertexAttribute::Type::FLOAT, false, 2},
+        {VertexAttribute::Type::FLOAT, false, 2},
+        {VertexAttribute::Type::FLOAT, false, 4},
+        {{}, 0}};
 };
 
 class Batch2D : public Flushable {

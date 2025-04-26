@@ -20,7 +20,9 @@ class DrawContext;
 struct SkyboxVertex {
     glm::vec2 position;
 
-    static constexpr VertexAttribute ATTRIBUTES[] {{GL_FLOAT,false,2}, {0}};
+    static constexpr VertexAttribute ATTRIBUTES[] {
+        {VertexAttribute::Type::FLOAT, false, 2}, 
+        {{}, 0}};
 };
 
 struct skysprite {
