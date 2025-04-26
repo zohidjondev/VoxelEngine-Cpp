@@ -12,9 +12,9 @@ Mesh<VertexStructure>::Mesh(const MeshData<VertexStructure>& data)
 
 template<typename VertexStructure>
 Mesh<VertexStructure>::Mesh(const VertexStructure* vertexBuffer, size_t vertices, const uint32_t* indexBuffer, size_t indices, const VertexAttribute* attrs) :
-    ibo(0),
     vao(0),
     vbo(0),
+    ibo(0),
     vertexCount(0),
     indexCount(0)
 {
