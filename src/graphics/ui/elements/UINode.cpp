@@ -74,6 +74,11 @@ UINode* UINode::listenDoubleClick(const onaction& action) {
     return this;
 }
 
+UINode* UINode::listenFocus(const onaction& action) {
+    focusCallbacks.listen(action);
+    return this;
+}
+
 UINode* UINode::listenDefocus(const onaction& action) {
     defocusCallbacks.listen(action);
     return this;
@@ -99,6 +104,11 @@ void UINode::mouseRelease(int x, int y) {
 
 bool UINode::isPressed() const {
     return pressed;
+}
+
+void UINode::onFocus() {
+    focused = true;
+    focusCallbacks.notify(gui);
 }
 
 void UINode::defocus() {

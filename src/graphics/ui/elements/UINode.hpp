@@ -114,6 +114,8 @@ namespace gui {
         ActionsSet actions;
         /// @brief 'ondoubleclick' callbacks
         ActionsSet doubleClickCallbacks;
+        /// @brief 'onfocus' callbacks
+        ActionsSet focusCallbacks;
         /// @brief 'ondefocus' callbacks
         ActionsSet defocusCallbacks;
         /// @brief element tooltip text
@@ -173,9 +175,10 @@ namespace gui {
 
         virtual UINode* listenAction(const onaction& action);
         virtual UINode* listenDoubleClick(const onaction& action);
+        virtual UINode* listenFocus(const onaction& action);
         virtual UINode* listenDefocus(const onaction& action);
 
-        virtual void onFocus() {focused = true;}
+        virtual void onFocus();
         virtual void doubleClick(int x, int y);
         virtual void click(int x, int y);
         virtual void clicked(Mousecode button) {}

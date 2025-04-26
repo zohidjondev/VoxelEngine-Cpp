@@ -9,6 +9,7 @@
 namespace gui {
     class Container : public UINode, public ::util::ObjectsKeeper {
         int prevScrollY = -1;
+        bool mustRefresh = true;
     protected:
         std::vector<std::shared_ptr<UINode>> nodes;
         std::vector<IntervalEvent> intervalEvents;

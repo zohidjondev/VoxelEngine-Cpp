@@ -94,8 +94,8 @@ static int l_container_add(lua::State* L) {
         auto subnode = guiutil::create(
             engine->getGUI(), xmlsrc, std::move(env)
         );
-        node->add(subnode);
         UINode::getIndices(subnode, docnode.document->getMapWriteable());
+        node->add(std::move(subnode));
     } catch (const std::exception& err) {
         throw std::runtime_error(err.what());
     }
