@@ -1,6 +1,5 @@
 #include "WorldRenderer.hpp"
 
-#include <GL/glew.h>
 #include <assert.h>
 
 #include <algorithm>

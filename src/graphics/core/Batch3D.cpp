@@ -3,7 +3,6 @@
 #include "Mesh.hpp"
 #include "Texture.hpp"
 
-#include <GL/glew.h>
 #include "typedefs.hpp"
 #include "maths/UVRegion.hpp"
 

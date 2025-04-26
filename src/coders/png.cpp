@@ -1,7 +1,6 @@
 #include "png.hpp"
 
 #include <png.h>
-#include <GL/glew.h>
 
 #include <iostream>
 

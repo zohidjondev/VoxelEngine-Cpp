@@ -12,20 +12,19 @@ struct VertexAttribute {
     bool normalized = false;
     ubyte count = 0;
 
-
     [[nodiscard]] uint32_t size() const {
         switch (type) {
             case GL_FLOAT:
-                return count * sizeof(float);
+                return count * sizeof(GLfloat);
             case GL_UNSIGNED_INT:
             case GL_INT:
-                return count * sizeof(uint32_t);
+                return count * sizeof(GLint);
             case GL_UNSIGNED_SHORT:
             case GL_SHORT:
-                return count * sizeof(uint16_t);
+                return count * sizeof(GLshort);
             case GL_UNSIGNED_BYTE:
             case GL_BYTE:
-                return count * sizeof(uint8_t);
+                return count * sizeof(GLbyte);
             default:
                 throw std::runtime_error("VertexAttribute type is not supported");
         }

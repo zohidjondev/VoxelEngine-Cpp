@@ -4,8 +4,6 @@
 #include "gl_util.hpp"
 #include "maths/UVRegion.hpp"
 
-#include <GL/glew.h>
-
 #include <cmath>
 
 
