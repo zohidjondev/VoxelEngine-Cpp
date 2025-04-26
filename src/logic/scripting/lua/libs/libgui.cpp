@@ -345,6 +345,14 @@ static int p_get_src(UINode* node, lua::State* L) {
     return 0;
 }
 
+static int p_get_region(UINode* node, lua::State* L) {
+    if (auto image = dynamic_cast<Image*>(node)) {
+        const auto& region = image->getRegion();
+        return lua::pushvec4(L, {region.u1, region.v1, region.u2, region.v2});
+    }
+    return 0;
+}
+
 static int p_get_data(UINode* node, lua::State* L) {
     if (auto canvas = dynamic_cast<Canvas*>(node)) {
         return lua::newuserdata<lua::LuaCanvas>(L, canvas->texture(), canvas->data());
@@ -556,6 +564,7 @@ static int l_gui_getattr(lua::State* L) {
             {"cursor", p_get_cursor},
             {"data", p_get_data},
             {"parent", p_get_parent},
+            {"region", p_get_region},
         };
     auto func = getters.find(attr);
     if (func != getters.end()) {

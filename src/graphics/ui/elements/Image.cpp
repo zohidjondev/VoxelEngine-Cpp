@@ -80,3 +80,7 @@ void Image::setTexture(const std::string& name) {
 void Image::setRegion(const UVRegion& region) {
     this->region = region;
 }
+
+const UVRegion& Image::getRegion() const {
+    return region;
+}
