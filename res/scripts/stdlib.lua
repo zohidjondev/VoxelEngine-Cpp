@@ -226,15 +226,17 @@ end
 
 function gui.template(name, params)
     local text = file.read(file.find("layouts/templates/"..name..".xml"))
-    for k,v in pairs(params) do
-        local arg = tostring(v):gsub("'", "\\'"):gsub('"', '\\"')
-        text = text:gsub("(%%{"..k.."})", arg)
-    end
-    text = text:gsub("if%s*=%s*'%%{%w+}'", "if=''")
-    text = text:gsub("if%s*=%s*\"%%{%w+}\"", "if=\"\"")
+    text = text:gsub("%%{([^}]+)}", function(n) 
+        local s = params[n]
+        if not s or #s == 0 then
+            return
+        end
+        local e = string.escape(s)
+        return e:sub(2, #e-1)
+    end)
+    text = text:gsub('if%s*=%s*[\'"]%%{%w+}[\'"]', "if=\"\"")
     -- remove unsolved properties: attr='%{var}'
-    text = text:gsub("%s*%S+='%%{[^}]+}'%s*", " ")
-    text = text:gsub('%s*%S+="%%{[^}]+}"%s*', " ")
+    text = text:gsub('%s*%S+=[\'"]%%{[^}]+}[\'"]%s*', " ")
     return text
 end
 
