@@ -659,6 +659,12 @@ static void p_set_src(UINode* node, lua::State* L, int idx) {
         iframe->setSrc(lua::require_string(L, idx));
     }
 }
+static void p_set_region(UINode* node, lua::State* L, int idx) {
+    if (auto image = dynamic_cast<Image*>(node)) {
+        auto vec = lua::tovec4(L, idx);
+        image->setRegion(UVRegion(vec.x, vec.y, vec.z, vec.w));
+    }
+}
 static void p_set_value(UINode* node, lua::State* L, int idx) {
     if (auto bar = dynamic_cast<TrackBar*>(node)) {
         bar->setValue(lua::tonumber(L, idx));
@@ -785,6 +791,7 @@ static int l_gui_setattr(lua::State* L) {
             {"inventory", p_set_inventory},
             {"cursor", p_set_cursor},
             {"focused", p_set_focused},
+            {"region", p_set_region},
         };
     auto func = setters.find(attr);
     if (func != setters.end()) {

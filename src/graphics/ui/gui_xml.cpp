@@ -544,6 +544,11 @@ static std::shared_ptr<UINode> read_image(
     std::string src = element.attr("src", "").getText();
     auto image = std::make_shared<Image>(reader.getGUI(), src);
     read_uinode(reader, element, *image);
+
+    if (element.has("region")) {
+        auto vec = element.attr("region").asVec4();
+        image->setRegion(UVRegion(vec.x, vec.y, vec.z, vec.w));
+    }
     return image;
 }
 
