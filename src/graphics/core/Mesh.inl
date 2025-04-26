@@ -3,14 +3,21 @@
 #include "MeshData.hpp"
 #include "gl_util.hpp"
 
+inline constexpr size_t calc_size(const VertexAttribute attrs[]) {
+    size_t vertexSize = 0;
+    for (int i = 0; attrs[i].count; i++) {
+        vertexSize += attrs[i].size();
+    }
+    return vertexSize;
+}
+
 template <typename VertexStructure>
 Mesh<VertexStructure>::Mesh(const MeshData<VertexStructure>& data)
     : Mesh(
           data.vertices.data(),
           data.vertices.size(),
           data.indices.data(),
-          data.indices.size(),
-          data.attrs.data()
+          data.indices.size()
       ) {
 }
 
@@ -19,18 +26,15 @@ Mesh<VertexStructure>::Mesh(
     const VertexStructure* vertexBuffer,
     size_t vertices,
     const uint32_t* indexBuffer,
-    size_t indices,
-    const VertexAttribute* attrs
+    size_t indices
 )
     : vao(0), vbo(0), ibo(0), vertexCount(0), indexCount(0) {
+    static_assert(
+        calc_size(VertexStructure::ATTRIBUTES) == sizeof(VertexStructure)
+    );
+    
+    const auto& attrs = VertexStructure::ATTRIBUTES;
     MeshStats::meshesCount++;
-    vertexSize = 0;
-    for (int i = 0; attrs[i].count; i++) {
-        vertexSize += attrs[i].size();
-    }
-    if (vertexSize != sizeof(VertexStructure)) {
-        throw std::runtime_error("Vertex size mismatch!");
-    }
 
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
@@ -80,7 +84,7 @@ void Mesh<VertexStructure>::reload(
     if (vertexBuffer != nullptr && vertexCount != 0) {
         glBufferData(
             GL_ARRAY_BUFFER,
-            vertexCount * vertexSize,
+            vertexCount * sizeof(VertexStructure),
             vertexBuffer,
             GL_STREAM_DRAW
         );

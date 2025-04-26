@@ -7,7 +7,7 @@
 LineBatch::LineBatch(size_t capacity) : capacity(capacity) {
 
     buffer = std::make_unique<LineVertex[]>(capacity * 2);
-    mesh = std::make_unique<Mesh<LineVertex>>(buffer.get(), 0, LineVertex::ATTRIBUTES);
+    mesh = std::make_unique<Mesh<LineVertex>>(buffer.get(), 0);
     index = 0;
 }
 

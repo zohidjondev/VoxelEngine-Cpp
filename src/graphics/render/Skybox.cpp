@@ -44,7 +44,7 @@ Skybox::Skybox(uint size, Shader& shader)
         {{1.0f, -1.0f}}
     };
 
-    mesh = std::make_unique<Mesh<SkyboxVertex>>(vertices, 6, SkyboxVertex::ATTRIBUTES);
+    mesh = std::make_unique<Mesh<SkyboxVertex>>(vertices, 6);
 
     sprites.push_back(skysprite {
         "misc/moon",

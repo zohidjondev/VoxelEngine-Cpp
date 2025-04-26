@@ -9,7 +9,7 @@
 
 Batch2D::Batch2D(size_t capacity) : capacity(capacity), color(1.0f){
     buffer = std::make_unique<Batch2DVertex[]>(capacity );
-    mesh = std::make_unique<Mesh<Batch2DVertex>>(buffer.get(), 0, Batch2DVertex::ATTRIBUTES);
+    mesh = std::make_unique<Mesh<Batch2DVertex>>(buffer.get(), 0);
     index = 0;
 
     const ubyte pixels[] = {

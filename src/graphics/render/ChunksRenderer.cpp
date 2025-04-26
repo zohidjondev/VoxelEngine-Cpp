@@ -289,9 +289,7 @@ void ChunksRenderer::drawSortedMeshes(const Camera& camera, Shader& shader) {
             auto& entry = chunkEntries.at(0);
             if (found->second.sortedMesh == nullptr) {
                 found->second.sortedMesh = std::make_unique<Mesh<ChunkVertex>>(
-                    entry.vertexData.data(),
-                    entry.vertexData.size(),
-                    ChunkVertex::ATTRIBUTES
+                    entry.vertexData.data(), entry.vertexData.size()
                 );
             }
             found->second.sortedMesh->draw();
@@ -316,7 +314,7 @@ void ChunksRenderer::drawSortedMeshes(const Camera& camera, Shader& shader) {
             }
             write_sorting_mesh_entries(buffer.data(), chunkEntries);
             found->second.sortedMesh = std::make_unique<Mesh<ChunkVertex>>(
-                buffer.data(), size, ChunkVertex::ATTRIBUTES
+                buffer.data(), size
             );
         }
         found->second.sortedMesh->draw();

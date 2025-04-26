@@ -11,7 +11,7 @@ MainBatch::MainBatch(size_t capacity)
         : buffer(std::make_unique<MainBatchVertex[]>(capacity)),
           capacity(capacity),
           index(0),
-          mesh(std::make_unique<Mesh<MainBatchVertex>>(buffer.get(), 0, MainBatchVertex::ATTRIBUTES)) {
+          mesh(std::make_unique<Mesh<MainBatchVertex>>(buffer.get(), 0)) {
 
     const ubyte pixels[] = {
             255, 255, 255, 255,

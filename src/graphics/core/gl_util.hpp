@@ -43,5 +43,6 @@ namespace gl {
             case Type::BYTE:
                 return GL_BYTE;
         }
+        return 0;
     }
 }

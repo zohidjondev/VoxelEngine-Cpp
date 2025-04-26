@@ -18,7 +18,7 @@ struct VertexAttribute {
     bool normalized = false;
     ubyte count = 0;
 
-    [[nodiscard]] uint32_t size() const {
+    [[nodiscard]] constexpr uint32_t size() const {
         switch (type) {
             case Type::FLOAT:
                 return count * sizeof(float);
@@ -31,9 +31,8 @@ struct VertexAttribute {
             case Type::UNSIGNED_BYTE:
             case Type::BYTE:
                 return count * sizeof(int8_t);
-            default:
-                throw std::runtime_error("VertexAttribute type is not supported");
         }
+        return 0;
     }
 };
 

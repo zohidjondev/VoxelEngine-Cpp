@@ -662,7 +662,7 @@ ChunkMesh BlocksRenderer::render(const Chunk *chunk, const Chunks *chunks) {
     build(chunk, chunks);
 
     return ChunkMesh{std::make_unique<Mesh<ChunkVertex>>(
-        vertexBuffer.get(), vertexCount, indexBuffer.get(), indexCount, ChunkVertex::ATTRIBUTES
+        vertexBuffer.get(), vertexCount, indexBuffer.get(), indexCount
     ), std::move(sortingMesh)};
 }
 

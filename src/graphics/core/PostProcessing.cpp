@@ -21,7 +21,7 @@ PostProcessing::PostProcessing(size_t effectSlotsCount)
             {{1.0f, -1.0f}},
     };
 
-    quadMesh = std::make_unique<Mesh<PostProcessingVertex>>(meshData, 6, PostProcessingVertex::ATTRIBUTES);
+    quadMesh = std::make_unique<Mesh<PostProcessingVertex>>(meshData, 6);
 }
 
 PostProcessing::~PostProcessing() = default;

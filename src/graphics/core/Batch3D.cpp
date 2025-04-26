@@ -11,7 +11,7 @@ Batch3D::Batch3D(size_t capacity)
 
 
     buffer = std::make_unique<Batch3DVertex[]>(capacity);
-    mesh = std::make_unique<Mesh<Batch3DVertex>>(buffer.get(), 0, Batch3DVertex::ATTRIBUTES);
+    mesh = std::make_unique<Mesh<Batch3DVertex>>(buffer.get(), 0);
     index = 0;
 
     const ubyte pixels[] = {
