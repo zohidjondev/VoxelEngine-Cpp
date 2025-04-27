@@ -63,7 +63,7 @@ static runnable create_runnable(
     const std::string& name
 ) {
     if (element.has(name)) {
-        std::string text = element.attr(name).getText();
+        const std::string& text = element.attr(name).getText();
         if (!text.empty()) {
             return scripting::create_runnable(
                 reader.getEnvironment(), text, reader.getFilename()
@@ -180,6 +180,14 @@ static void read_uinode(
         node.listenAction(onclick);
     }
 
+    if (auto onfocus = create_action(reader, element, "onfocus")) {
+        node.listenFocus(onfocus);
+    }
+
+    if (auto ondefocus = create_action(reader, element, "ondefocus")) {
+        node.listenDefocus(ondefocus);
+    }
+
     if (auto ondoubleclick = create_action(reader, element, "ondoubleclick")) {
         node.listenDoubleClick(ondoubleclick);
     }
@@ -279,7 +287,7 @@ static std::wstring parse_inner_text(
 ) {
     std::wstring text = L"";
     if (element.size() == 1) {
-        std::string source = element.sub(0).attr("#").getText();
+        std::string source = element.sub(0).getInnerText();
         util::trim(source);
         text = util::str2wstr_utf8(source);
         if (text[0] == '@') {
@@ -379,7 +387,7 @@ static std::shared_ptr<UINode> read_button(
 
     std::shared_ptr<Button> button;
     auto& elements = element.getElements();
-    if (!elements.empty() && elements[0]->getTag() != "#") {
+    if (!elements.empty() && !elements[0]->isText()) {
         auto inner = reader.readUINode(*elements.at(0));
         if (inner != nullptr) {
             button = std::make_shared<Button>(gui, inner, padding);
@@ -536,6 +544,11 @@ static std::shared_ptr<UINode> read_image(
     std::string src = element.attr("src", "").getText();
     auto image = std::make_shared<Image>(reader.getGUI(), src);
     read_uinode(reader, element, *image);
+
+    if (element.has("region")) {
+        auto vec = element.attr("region").asVec4();
+        image->setRegion(UVRegion(vec.x, vec.y, vec.z, vec.w));
+    }
     return image;
 }
 
@@ -757,7 +770,7 @@ static std::shared_ptr<UINode> read_iframe(
     return iframe;
 }
 
-UiXmlReader::UiXmlReader(gui::GUI& gui, const scriptenv& env) : gui(gui), env(env) {
+UiXmlReader::UiXmlReader(gui::GUI& gui, scriptenv&& env) : gui(gui), env(std::move(env)) {
     contextStack.emplace("");
     add("image", read_image);
     add("canvas", read_canvas);
