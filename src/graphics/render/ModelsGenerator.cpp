@@ -50,7 +50,7 @@ static inline UVRegion get_region_for(
 
 void ModelsGenerator::prepare(Content& content, Assets& assets) {
     for (auto& [name, def] : content.blocks.getDefs()) {
-        if (def->model == BlockModel::custom && def->modelName.empty()) {
+        if (def->model == BlockModelType::CUSTOM && def->modelName.empty()) {
             assets.store(
                 std::make_unique<model::Model>(
                     loadCustomBlockModel(
@@ -74,7 +74,7 @@ void ModelsGenerator::prepare(Content& content, Assets& assets) {
 
 model::Model ModelsGenerator::fromCustom(
     const Assets& assets,
-    const std::vector<BoxModel>& modelBoxes,
+    const std::vector<AABB>& modelBoxes,
     const std::vector<std::string>& modelTextures,
     const std::vector<glm::vec3>& points,
     bool lighting
@@ -131,11 +131,11 @@ model::Model ModelsGenerator::generate(
     if (def.iconType == ItemIconType::BLOCK) {
         auto model = assets.require<model::Model>("block");
         const auto& blockDef = content.blocks.require(def.icon);
-        if (blockDef.model == BlockModel::xsprite) {
+        if (blockDef.model == BlockModelType::XSPRITE) {
             return create_flat_model(
                 "blocks:" + blockDef.textureFaces.at(0), assets
             );
-        } else if (blockDef.model == BlockModel::custom) {
+        } else if (blockDef.model == BlockModelType::CUSTOM) {
             model = assets.require<model::Model>(blockDef.modelName);
             for (auto& mesh : model.meshes) {
                 mesh.scale(glm::vec3(0.2f));
@@ -145,7 +145,7 @@ model::Model ModelsGenerator::generate(
         for (auto& mesh : model.meshes) {
             mesh.lighting = !blockDef.shadeless;
             switch (blockDef.model) {
-                case BlockModel::aabb: {
+                case BlockModelType::AABB: {
                     glm::vec3 size = blockDef.hitboxes.at(0).size();
                     float m = glm::max(size.x, glm::max(size.y, size.z));
                     m = glm::min(1.0f, m);

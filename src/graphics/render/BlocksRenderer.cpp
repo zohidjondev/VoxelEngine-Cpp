@@ -454,21 +454,21 @@ void BlocksRenderer::render(
             int y = i / (CHUNK_D * CHUNK_W);
             int z = (i / CHUNK_D) % CHUNK_W;
             switch (def.model) {
-                case BlockModel::block:
+                case BlockModelType::BLOCK:
                     blockCube({x, y, z}, texfaces, def, vox.state, !def.shadeless,
                               def.ambientOcclusion);
                     break;
-                case BlockModel::xsprite: {
+                case BlockModelType::XSPRITE: {
                     blockXSprite(x, y, z, glm::vec3(1.0f),
                                 texfaces[FACE_MX], texfaces[FACE_MZ], 1.0f);
                     break;
                 }
-                case BlockModel::aabb: {
+                case BlockModelType::AABB: {
                     blockAABB({x, y, z}, texfaces, &def, vox.state.rotation,
                               !def.shadeless, def.ambientOcclusion);
                     break;
                 }
-                case BlockModel::custom: {
+                case BlockModelType::CUSTOM: {
                     blockCustomModel({x, y, z}, &def, vox.state.rotation,
                                      !def.shadeless, def.ambientOcclusion);
                     break;
@@ -517,21 +517,21 @@ SortingMeshData BlocksRenderer::renderTranslucent(
             int y = i / (CHUNK_D * CHUNK_W);
             int z = (i / CHUNK_D) % CHUNK_W;
             switch (def.model) {
-                case BlockModel::block:
+                case BlockModelType::BLOCK:
                     blockCube({x, y, z}, texfaces, def, vox.state, !def.shadeless,
                               def.ambientOcclusion);
                     break;
-                case BlockModel::xsprite: {
+                case BlockModelType::XSPRITE: {
                     blockXSprite(x, y, z, glm::vec3(1.0f),
                                 texfaces[FACE_MX], texfaces[FACE_MZ], 1.0f);
                     break;
                 }
-                case BlockModel::aabb: {
+                case BlockModelType::AABB: {
                     blockAABB({x, y, z}, texfaces, &def, vox.state.rotation,
                               !def.shadeless, def.ambientOcclusion);
                     break;
                 }
-                case BlockModel::custom: {
+                case BlockModelType::CUSTOM: {
                     blockCustomModel({x, y, z}, &def, vox.state.rotation,
                                      !def.shadeless, def.ambientOcclusion);
                     break;

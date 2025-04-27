@@ -81,25 +81,25 @@ struct BlockRotProfile {
     static inline std::string PANE_NAME = "pane";
 };
 
-enum class BlockModel {
+enum class BlockModelType {
     /// @brief invisible
-    none,
+    NONE,
     /// @brief default cube shape
-    block,
+    BLOCK,
     /// @brief X-shape (grass)
-    xsprite,
+    XSPRITE,
     /// @brief box shape sized as block hitbox
-    aabb,
+    AABB,
     /// @brief custom model defined in json
-    custom
+    CUSTOM
 };
 
-VC_ENUM_METADATA(BlockModel)
-    {"none", BlockModel::none},
-    {"block", BlockModel::block},
-    {"X", BlockModel::xsprite},
-    {"aabb", BlockModel::aabb},
-    {"custom", BlockModel::custom},
+VC_ENUM_METADATA(BlockModelType)
+    {"none", BlockModelType::NONE},
+    {"block", BlockModelType::BLOCK},
+    {"X", BlockModelType::XSPRITE},
+    {"aabb", BlockModelType::AABB},
+    {"custom", BlockModelType::CUSTOM},
 VC_ENUM_END
 
 enum class CullingMode {
@@ -113,8 +113,6 @@ VC_ENUM_METADATA(CullingMode)
     {"optional", CullingMode::OPTIONAL},
     {"disabled", CullingMode::DISABLED},
 VC_ENUM_END
-
-using BoxModel = AABB;
 
 /// @brief Common kit of block properties applied to groups of blocks
 struct BlockMaterial : Serializable {
@@ -155,7 +153,7 @@ public:
     uint8_t drawGroup = 0;
 
     /// @brief Block model type
-    BlockModel model = BlockModel::block;
+    BlockModelType model = BlockModelType::BLOCK;
 
     /// @brief Custom model raw data
     dv::value customModelRaw = nullptr;

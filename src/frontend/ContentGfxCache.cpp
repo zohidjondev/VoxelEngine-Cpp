@@ -35,7 +35,7 @@ void ContentGfxCache::refresh(const Block& def, const Atlas& atlas) {
             sideregions[def.rt.id * 6 + side] = atlas.get(TEXTURE_NOTFOUND);
         }
     }
-    if (def.model == BlockModel::custom) {
+    if (def.model == BlockModelType::CUSTOM) {
         auto model = assets.require<model::Model>(def.modelName);
         // temporary dirty fix tbh
         if (def.modelName.find(':') == std::string::npos) {
