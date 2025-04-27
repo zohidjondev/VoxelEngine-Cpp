@@ -289,23 +289,30 @@ void BlocksRenderer::blockCustomModel(
         for (int triangle = 0; triangle < mesh.vertices.size() / 3; triangle++) {
             auto r = mesh.vertices[triangle * 3 + (triangle % 2) * 2].coord -
                      mesh.vertices[triangle * 3 + 1].coord;
+            r = r.x * X + r.y * Y + r.z * Z;
             r = glm::normalize(r);
 
             for (int i = 0; i < 3; i++) {
                 const auto& vertex = mesh.vertices[triangle * 3 + i];
-                auto n = vertex.normal.x * X + vertex.normal.y * Y +
+                auto n = vertex.normal.x * X + 
+                         vertex.normal.y * Y +
                          vertex.normal.z * Z;
                 float d = glm::dot(n, SUN_VECTOR);
-                d = 0.8f + d * 0.2f;
+                d = 0.7f + d * 0.3f;
                 const auto& vcoord = vertex.coord - 0.5f;
-                vertexAO(
+
+                glm::vec3 t = glm::cross(r, n);
+                glm::vec4 aoColor {1.0f, 1.0f, 1.0f, 1.0f};
+                if (ao) {
+                    auto p = coord + vcoord.x * X + vcoord.y * Y +
+                             vcoord.z * Z + r * 0.5f + t * 0.5f + n * 0.5f;
+                    aoColor = pickSoftLight(p.x, p.y, p.z, glm::ivec3(r), glm::ivec3(t));
+                }
+                this->vertex(
                     coord + vcoord.x * X + vcoord.y * Y + vcoord.z * Z,
                     vertex.uv.x,
                     vertex.uv.y,
-                    glm::vec4(d, d, d, d),
-                    glm::cross(r, n),
-                    r,
-                    n
+                    glm::vec4(d, d, d, d) * aoColor
                 );
                 indexBuffer[indexCount++] = vertexOffset++;
             }
