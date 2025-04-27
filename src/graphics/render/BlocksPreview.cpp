@@ -32,7 +32,7 @@ std::unique_ptr<ImageData> BlocksPreview::draw(
                                cache.getRegion(id, 4), cache.getRegion(id, 5)};
 
     glm::vec3 offset(0.1f, 0.5f, 0.1f);
-    switch (def.model) {
+    switch (def.model.type) {
         case BlockModelType::NONE:
             // something went wrong...
             break;

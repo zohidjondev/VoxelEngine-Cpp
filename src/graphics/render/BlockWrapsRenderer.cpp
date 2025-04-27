@@ -44,7 +44,7 @@ void BlockWrapsRenderer::draw(const BlockWrapper& wrapper) {
     }
     if (vox->id != BLOCK_VOID) {
         const auto& def = level.content.getIndices()->blocks.require(vox->id);
-        switch (def.model) {
+        switch (def.model.type) {
             case BlockModelType::BLOCK:
                 batch->cube(
                     glm::vec3(wrapper.position) + glm::vec3(0.5f),

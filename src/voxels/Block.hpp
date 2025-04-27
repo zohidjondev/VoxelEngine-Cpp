@@ -94,6 +94,16 @@ enum class BlockModelType {
     CUSTOM
 };
 
+struct BlockModel {
+    BlockModelType type = BlockModelType::BLOCK;
+    
+    /// @brief Custom model raw data
+    dv::value customRaw = nullptr;
+
+    /// @brief Custom model name (generated or an asset)
+    std::string name = "";
+};
+
 VC_ENUM_METADATA(BlockModelType)
     {"none", BlockModelType::NONE},
     {"block", BlockModelType::BLOCK},
@@ -152,13 +162,8 @@ public:
     /// @brief Influences visible block sides for transparent blocks
     uint8_t drawGroup = 0;
 
-    /// @brief Block model type
-    BlockModelType model = BlockModelType::BLOCK;
-
-    /// @brief Custom model raw data
-    dv::value customModelRaw = nullptr;
-
-    std::string modelName = "";
+    /// @brief Block model
+    BlockModel model {};
 
     /// @brief Culling mode
     CullingMode culling = CullingMode::DEFAULT;

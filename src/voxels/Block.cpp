@@ -143,7 +143,6 @@ void Block::cloneTo(Block& dst) {
     if (particles) {
         dst.particles = std::make_unique<ParticlesPreset>(*particles);
     }
-    dst.customModelRaw = customModelRaw;
 }
 
 static std::set<std::string, std::less<>> RESERVED_BLOCK_FIELDS {

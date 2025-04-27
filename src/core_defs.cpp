@@ -19,7 +19,7 @@ void corecontent::setup(Input& input, ContentBuilder& builder) {
         block.skyLightPassing = true;
         block.obstacle = false;
         block.selectable = false;
-        block.model = BlockModelType::NONE;
+        block.model.type = BlockModelType::NONE;
         block.pickingItem = CORE_EMPTY;
     }
     {

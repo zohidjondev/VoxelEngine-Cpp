@@ -50,16 +50,16 @@ static inline UVRegion get_region_for(
 
 void ModelsGenerator::prepare(Content& content, Assets& assets) {
     for (auto& [name, def] : content.blocks.getDefs()) {
-        if (def->model == BlockModelType::CUSTOM && def->modelName.empty()) {
+        if (def->model.type == BlockModelType::CUSTOM && def->model.name.empty()) {
             assets.store(
                 std::make_unique<model::Model>(
                     loadCustomBlockModel(
-                        def->customModelRaw, assets, !def->shadeless
+                        def->model.customRaw, assets, !def->shadeless
                     )
                 ),
                 name + ".model"
             );
-            def->modelName = def->name + ".model";
+            def->model.name = def->name + ".model";
         }
     }
     for (auto& [name, def] : content.items.getDefs()) {
@@ -131,12 +131,12 @@ model::Model ModelsGenerator::generate(
     if (def.iconType == ItemIconType::BLOCK) {
         auto model = assets.require<model::Model>("block");
         const auto& blockDef = content.blocks.require(def.icon);
-        if (blockDef.model == BlockModelType::XSPRITE) {
+        if (blockDef.model.type == BlockModelType::XSPRITE) {
             return create_flat_model(
                 "blocks:" + blockDef.textureFaces.at(0), assets
             );
-        } else if (blockDef.model == BlockModelType::CUSTOM) {
-            model = assets.require<model::Model>(blockDef.modelName);
+        } else if (blockDef.model.type == BlockModelType::CUSTOM) {
+            model = assets.require<model::Model>(blockDef.model.name);
             for (auto& mesh : model.meshes) {
                 mesh.scale(glm::vec3(0.2f));
             }
@@ -144,7 +144,7 @@ model::Model ModelsGenerator::generate(
         }
         for (auto& mesh : model.meshes) {
             mesh.lighting = !blockDef.shadeless;
-            switch (blockDef.model) {
+            switch (blockDef.model.type) {
                 case BlockModelType::AABB: {
                     glm::vec3 size = blockDef.hitboxes.at(0).size();
                     float m = glm::max(size.x, glm::max(size.y, size.z));

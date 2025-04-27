@@ -453,7 +453,7 @@ void BlocksRenderer::render(
             int x = i % CHUNK_W;
             int y = i / (CHUNK_D * CHUNK_W);
             int z = (i / CHUNK_D) % CHUNK_W;
-            switch (def.model) {
+            switch (def.model.type) {
                 case BlockModelType::BLOCK:
                     blockCube({x, y, z}, texfaces, def, vox.state, !def.shadeless,
                               def.ambientOcclusion);
@@ -516,7 +516,7 @@ SortingMeshData BlocksRenderer::renderTranslucent(
             int x = i % CHUNK_W;
             int y = i / (CHUNK_D * CHUNK_W);
             int z = (i / CHUNK_D) % CHUNK_W;
-            switch (def.model) {
+            switch (def.model.type) {
                 case BlockModelType::BLOCK:
                     blockCube({x, y, z}, texfaces, def, vox.state, !def.shadeless,
                               def.ambientOcclusion);
