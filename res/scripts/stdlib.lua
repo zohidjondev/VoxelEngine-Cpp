@@ -228,11 +228,14 @@ function gui.template(name, params)
     local text = file.read(file.find("layouts/templates/"..name..".xml"))
     text = text:gsub("%%{([^}]+)}", function(n) 
         local s = params[n]
+        if s == nil then
+            return
+        end
         if type(s) ~= "string" then
             return tostring(s)
         end
         if #s == 0 then
-            return
+            return ''
         end
         local e = string.escape(s)
         return e:sub(2, #e-1)
