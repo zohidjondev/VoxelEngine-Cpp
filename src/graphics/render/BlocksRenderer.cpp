@@ -308,7 +308,7 @@ void BlocksRenderer::blockCustomModel(
             const auto& v0 = mesh.vertices[triangle * 3];
             auto n = v0.normal.x * X + v0.normal.y * Y + v0.normal.z * Z;
 
-            if (!isOpen(glm::floor(coord + n * 1e-4f), *block) && is_aligned(r) && is_aligned(n)) {
+            if (!isOpen(glm::floor(coord + n * 1e-4f), *block) && is_aligned(n)) {
                 continue;
             }
 
