@@ -265,6 +265,19 @@ void BlocksRenderer::blockAABB(
     }
 }
 
+static bool is_aligned(const glm::vec3& v, float e = 1e-6f) {
+    if (std::abs(v.y) < e && std::abs(v.z) < e && std::abs(v.x) > e) {
+        return true;
+    }
+    if (std::abs(v.x) < e && std::abs(v.z) < e && std::abs(v.y) > e) {
+        return true;
+    }
+    if (std::abs(v.x) < e && std::abs(v.y) < e && std::abs(v.z) > e) {
+        return true;
+    }
+    return false;
+}
+
 void BlocksRenderer::blockCustomModel(
     const glm::ivec3& icoord, const Block* block, ubyte rotation, bool lights, bool ao
 ) {
@@ -295,7 +308,7 @@ void BlocksRenderer::blockCustomModel(
             const auto& v0 = mesh.vertices[triangle * 3];
             auto n = v0.normal.x * X + v0.normal.y * Y + v0.normal.z * Z;
 
-            if (!isOpen(coord + n, *block)) {
+            if (!isOpen(glm::floor(coord + n * 1e-4f), *block) && is_aligned(r) && is_aligned(n)) {
                 continue;
             }
 
