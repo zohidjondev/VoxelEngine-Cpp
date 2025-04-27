@@ -66,6 +66,7 @@ namespace gui {
     class UINode : public std::enable_shared_from_this<UINode> {
     protected:
         GUI& gui;
+        bool mustRefresh = true;
     private:
         /// @brief element identifier used for direct access in UiDocument
         std::string id = "";
@@ -131,7 +132,12 @@ namespace gui {
 
         /// @brief Called every frame for all visible elements 
         /// @param delta delta timУ
-        virtual void act(float delta) {};
+        virtual void act(float delta) {
+            if (mustRefresh) {
+                mustRefresh = false;
+                refresh();
+            }
+        };
         virtual void draw(const DrawContext& pctx, const Assets& assets) = 0;
 
         virtual void setVisible(bool flag);
@@ -275,5 +281,9 @@ namespace gui {
             const std::shared_ptr<UINode>& node,
             const std::string& id
         );
+
+        void setMustRefresh() {
+            mustRefresh = true;
+        }
     };
 }

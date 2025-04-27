@@ -71,10 +71,7 @@ void Container::mouseRelease(int x, int y) {
 }
 
 void Container::act(float delta) {
-    if (mustRefresh) {
-        refresh();
-        mustRefresh = false;
-    }
+    UINode::act(delta);
     for (const auto& node : nodes) {
         if (node->isVisible()) {
             node->act(delta);
@@ -167,6 +164,12 @@ void Container::add(const std::shared_ptr<UINode>& node) {
     node->setParent(this);
     node->reposition();
     mustRefresh = true;
+
+    auto parent = getParent();
+    while (parent) {
+        parent->setMustRefresh();
+        parent = parent->getParent();
+    }
 }
 
 void Container::add(const std::shared_ptr<UINode>& node, glm::vec2 pos) {

@@ -229,7 +229,7 @@ function gui.template(name, params)
     text = text:gsub("%%{([^}]+)}", function(n) 
         local s = params[n]
         if type(s) ~= "string" then
-            return s
+            return tostring(s)
         end
         if #s == 0 then
             return
