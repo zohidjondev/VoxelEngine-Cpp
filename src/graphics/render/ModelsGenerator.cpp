@@ -95,32 +95,30 @@ model::Model ModelsGenerator::fromCustom(
             modelBoxes[i].center(), modelBoxes[i].size() * 0.5f, boxtexfaces
         );
     }
-    glm::vec3 norm {0, 1, 0};
     for (size_t i = 0; i < points.size() / 4; i++) {
         auto texture = modelTextures[modelBoxes.size() * 6 + i];
+
+        const glm::vec3& v0 = points[i * 4];
+        const glm::vec3& v1 = points[i * 4 + 1];
+        const glm::vec3& v2 = points[i * 4 + 2];
+        const glm::vec3& v3 = points[i * 4 + 3];
+
+        glm::vec3 edge1 = v1 - v0;
+        glm::vec3 edge2 = v2 - v0;
+
+        glm::vec3 norm = glm::cross(edge1, edge2);
+        norm = glm::normalize(norm);
 
         auto& mesh = model.addMesh(texture);
         mesh.lighting = lighting;
 
         auto reg = get_region_for(texture, assets);
-        mesh.vertices.push_back(
-            {points[i * 4 + 0], glm::vec2(reg.u1, reg.v1), norm}
-        );
-        mesh.vertices.push_back(
-            {points[i * 4 + 1], glm::vec2(reg.u2, reg.v1), norm}
-        );
-        mesh.vertices.push_back(
-            {points[i * 4 + 2], glm::vec2(reg.u2, reg.v2), norm}
-        );
-        mesh.vertices.push_back(
-            {points[i * 4 + 0], glm::vec2(reg.u1, reg.v1), norm}
-        );
-        mesh.vertices.push_back(
-            {points[i * 4 + 2], glm::vec2(reg.u2, reg.v2), norm}
-        );
-        mesh.vertices.push_back(
-            {points[i * 4 + 3], glm::vec2(reg.u1, reg.v2), norm}
-        );
+        mesh.vertices.push_back({v0, glm::vec2(reg.u1, reg.v1), norm});
+        mesh.vertices.push_back({v1, glm::vec2(reg.u2, reg.v1), norm});
+        mesh.vertices.push_back({v2, glm::vec2(reg.u2, reg.v2), norm});
+        mesh.vertices.push_back({v0, glm::vec2(reg.u1, reg.v1), norm});
+        mesh.vertices.push_back({v2, glm::vec2(reg.u2, reg.v2), norm});
+        mesh.vertices.push_back({v3, glm::vec2(reg.u1, reg.v2), norm});
     }
     return model;
 }
