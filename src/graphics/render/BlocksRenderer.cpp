@@ -292,16 +292,21 @@ void BlocksRenderer::blockCustomModel(
             r = r.x * X + r.y * Y + r.z * Z;
             r = glm::normalize(r);
 
+            const auto& v0 = mesh.vertices[triangle * 3];
+            auto n = v0.normal.x * X + v0.normal.y * Y + v0.normal.z * Z;
+
+            if (!isOpen(coord + n, *block)) {
+                continue;
+            }
+
+            float d = glm::dot(n, SUN_VECTOR);
+            d = 0.7f + d * 0.3f;
+            glm::vec3 t = glm::cross(r, n);
+
             for (int i = 0; i < 3; i++) {
                 const auto& vertex = mesh.vertices[triangle * 3 + i];
-                auto n = vertex.normal.x * X + 
-                         vertex.normal.y * Y +
-                         vertex.normal.z * Z;
-                float d = glm::dot(n, SUN_VECTOR);
-                d = 0.7f + d * 0.3f;
                 const auto& vcoord = vertex.coord - 0.5f;
 
-                glm::vec3 t = glm::cross(r, n);
                 glm::vec4 aoColor {1.0f, 1.0f, 1.0f, 1.0f};
                 if (ao) {
                     auto p = coord + vcoord.x * X + vcoord.y * Y +
