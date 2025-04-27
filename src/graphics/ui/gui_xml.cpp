@@ -387,7 +387,7 @@ static std::shared_ptr<UINode> read_button(
 
     std::shared_ptr<Button> button;
     auto& elements = element.getElements();
-    if (!elements.empty() && elements[0]->isText()) {
+    if (!elements.empty() && !elements[0]->isText()) {
         auto inner = reader.readUINode(*elements.at(0));
         if (inner != nullptr) {
             button = std::make_shared<Button>(gui, inner, padding);
