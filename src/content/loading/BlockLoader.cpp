@@ -156,7 +156,7 @@ template<> void ContentUnitLoader<Block>::loadUnit(
     if (auto found = root.at("emission")) {
         const auto& emissionarr = *found;
         for (size_t i = 0; i < 3; i++) {
-            def.emission[i] = std::clamp(emissionarr[i].asInteger(), static_cast<integer_t>(0), static_cast<integer_t>(15));
+            def.emission[i] = glm::clamp(emissionarr[i].asInteger(), static_cast<integer_t>(0), static_cast<integer_t>(15));
         }
     }
 
