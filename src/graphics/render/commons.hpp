@@ -22,8 +22,6 @@ struct ChunkVertex {
         {{}, 0}};
 };
 
-/// @brief Chunk mesh vertex attributes
-
 template<typename VertexStructure>
 class Mesh;
 
