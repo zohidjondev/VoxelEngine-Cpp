@@ -9,8 +9,8 @@
 #include "lighting/Lightmap.hpp"
 #include "frontend/ContentGfxCache.hpp"
 
-const glm::vec3 BlocksRenderer::SUN_VECTOR (0.2275f,0.9388f,-0.1005f);
-
+const glm::vec3 BlocksRenderer::SUN_VECTOR(0.528265f, 0.833149f, -0.163704f);
+const float DIRECTIONAL_LIGHT_FACTOR = 0.3f;
 
 BlocksRenderer::BlocksRenderer(
     size_t capacity,
@@ -122,7 +122,7 @@ void BlocksRenderer::faceAO(
     float s = 0.5f;
     if (lights) {
         float d = glm::dot(glm::normalize(Z), SUN_VECTOR);
-        d = 0.7f + d * 0.3f;
+        d = (1.0f - DIRECTIONAL_LIGHT_FACTOR) + d * DIRECTIONAL_LIGHT_FACTOR;
 
         auto axisX = glm::normalize(X);
         auto axisY = glm::normalize(Y);
@@ -160,7 +160,7 @@ void BlocksRenderer::face(
     float s = 0.5f;
     if (lights) {
         float d = glm::dot(glm::normalize(Z), SUN_VECTOR);
-        d = 0.7f + d * 0.3f;
+        d = (1.0f - DIRECTIONAL_LIGHT_FACTOR) + d * DIRECTIONAL_LIGHT_FACTOR;
         tint *= d;
     }
     vertex(coord + (-X - Y + Z) * s, region.u1, region.v1, tint);
@@ -313,7 +313,7 @@ void BlocksRenderer::blockCustomModel(
             }
 
             float d = glm::dot(n, SUN_VECTOR);
-            d = 0.7f + d * 0.3f;
+            d = (1.0f - DIRECTIONAL_LIGHT_FACTOR) + d * DIRECTIONAL_LIGHT_FACTOR;
             glm::vec3 t = glm::cross(r, n);
 
             for (int i = 0; i < 3; i++) {
