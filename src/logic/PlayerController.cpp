@@ -345,6 +345,16 @@ static int determine_rotation(
                 if (camDir.z > 0.0f) return BLOCK_DIR_SOUTH;
                 if (camDir.z < 0.0f) return BLOCK_DIR_NORTH;
             }
+        } else if (name == "stairs") {
+            int verticalBit = ((norm.y - camDir.y * 0.5f) < 0.0) ? 4 : 0; 
+            if (abs(camDir.x) > abs(camDir.z)) {
+                if (camDir.x > 0.0f) return BLOCK_DIR_EAST | verticalBit;
+                if (camDir.x < 0.0f) return BLOCK_DIR_WEST | verticalBit;
+            }
+            if (abs(camDir.x) < abs(camDir.z)) {
+                if (camDir.z > 0.0f) return BLOCK_DIR_SOUTH | verticalBit;
+                if (camDir.z < 0.0f) return BLOCK_DIR_NORTH | verticalBit;
+            }
         }
     }
     return 0;
@@ -421,7 +431,7 @@ void PlayerController::processRightClick(
     auto camera = player.fpCamera.get();
 
     blockstate state {};
-    state.rotation = determine_rotation(&def, selection.normal, camera->dir);
+    state.rotation = determine_rotation(&def, selection.normal, camera->front);
 
     if (!input.shift && target.rt.funcsset.oninteract) {
         if (scripting::on_block_interact(
