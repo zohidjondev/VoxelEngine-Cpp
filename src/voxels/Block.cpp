@@ -91,6 +91,22 @@ const BlockRotProfile BlockRotProfile::PANE {
     4
 };
 
+const BlockRotProfile BlockRotProfile::STAIRS {
+    "stairs",
+    {
+        {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}},    // North
+        {{0, 0, -1}, {0, 1, 0}, {1, 0, 0}},   // East
+        {{-1, 0, 0}, {0, 1, 0}, {0, 0, -1}},  // South
+        {{0, 0, 1}, {0, 1, 0}, {-1, 0, 0}},   // West
+
+        {{-1, 0, 0}, {0, -1, 0}, {0, 0, 1}},
+        {{0, 0, 1}, {0, -1, 0}, {1, 0, 0}},
+        {{1, 0, 0}, {0, -1, 0}, {0, 0, -1}},
+        {{0, 0, -1}, {0, -1, 0}, {-1, 0, 0}},
+    },
+    8
+};
+
 Block::Block(const std::string& name)
     : name(name),
       caption(util::id_to_caption(name)),
