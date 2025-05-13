@@ -164,9 +164,10 @@ Properties:
 
 Properties:
 
-| Name  | Type   | Read | Write | Description  |
-| ----- | ------ | ---- | ----- | ------------ |
-| src   | string | yes  | yes   | texture name |
+| Name   | Type   | Read | Write | Description      |
+| ------ | ------ | ---- | ----- | ---------------- |
+| src    | string | yes  | yes   | texture name     |
+| region | vec4   | yes  | yes   | image sub-region |
 
 ## Canvas
 
@@ -195,6 +196,11 @@ Here, *color* can be specified in the following ways:
 | data:set_data(data: table<int>)                          | replaces pixel data (width * height * 4 numbers)        |
 | data:create_texture(name: str)                           | creates and shares texture to renderer                  |
 
+## Inline frame (iframe)
+
+| Name     | Type   | Read | Write | Description                 |
+|----------|--------|------|-------|-----------------------------|
+| src      | string | yes  | yes   | id of the embedded document |
 
 ## Inventory
 
